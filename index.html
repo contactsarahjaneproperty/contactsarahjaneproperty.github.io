@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wandernest Stays — Owner Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', system-ui, sans-serif; background: #FAFAF8; color: #1A1A1A; min-height: 100vh; }
+
+.nav {
+  background: white;
+  border-bottom: 1px solid #E5E5E5;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.brand { font-family: 'DM Serif Display', serif; font-size: 20px; letter-spacing: -0.02em; }
+.brand span { color: #1D9E75; }
+.nav-sub { font-size: 12px; color: #7A7A7A; }
+
+.hero {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem 2rem;
+  text-align: center;
+}
+.hero .tag {
+  display: inline-block;
+  background: #E1F5EE;
+  color: #0F6E56;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 99px;
+  margin-bottom: 1.25rem;
+}
+.hero h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(28px, 5vw, 44px);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin-bottom: 1rem;
+  color: #1A1A1A;
+}
+.hero p {
+  font-size: 16px;
+  color: #4A4A4A;
+  line-height: 1.65;
+  max-width: 560px;
+  margin: 0 auto 2.5rem;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 1.5rem 4rem;
+}
+
+.card {
+  background: white;
+  border: 1px solid #E5E5E5;
+  border-radius: 16px;
+  padding: 2rem 1.75rem;
+  text-align: left;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  display: block;
+}
+.card:hover {
+  border-color: #1D9E75;
+  box-shadow: 0 8px 32px rgba(29,158,117,0.1);
+  transform: translateY(-2px);
+}
+.card-icon {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  margin-bottom: 1.25rem;
+}
+.card-icon.green { background: #E1F5EE; }
+.card-icon.blue { background: #E6F1FB; }
+.card-icon.amber { background: #FAEEDA; }
+.card h2 { font-family: 'DM Serif Display', serif; font-size: 20px; margin-bottom: 0.5rem; letter-spacing: -0.01em; }
+.card p { font-size: 13px; color: #4A4A4A; line-height: 1.6; margin-bottom: 1.25rem; }
+.card-badge {
+  display: inline-block;
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-weight: 500;
+}
+.badge-green { background: #E1F5EE; color: #0F6E56; }
+.badge-blue { background: #E6F1FB; color: #185FA5; }
+.badge-amber { background: #FAEEDA; color: #854F0B; }
+
+.footer {
+  text-align: center;
+  padding: 2rem;
+  font-size: 12px;
+  color: #7A7A7A;
+  border-top: 1px solid #E5E5E5;
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="brand">Wandernest<span>.</span></div>
+  <div class="nav-sub">Owner Portal — wanderneststays.com.au</div>
+</nav>
+
+<div class="hero">
+  <div class="tag">Welcome to Wandernest Stays</div>
+  <h1>Your property,<br>perfectly managed.</h1>
+  <p>Everything you need to get your property set up, onboarded, and generating revenue — all in one place. Select what you need below.</p>
+</div>
+
+<div class="cards">
+
+  <a href="forms/onboarding.html" class="card">
+    <div class="card-icon green">🏡</div>
+    <h2>New owner onboarding</h2>
+    <p>Complete your property profile — access details, WiFi, preferences, pricing and more. Takes about 5 minutes.</p>
+    <span class="card-badge badge-green">New owners start here</span>
+  </a>
+
+  <a href="guidebook/index.html" class="card">
+    <div class="card-icon blue">📖</div>
+    <h2>Guest guidebook request</h2>
+    <p>Tell us what you'd like in your digital guest guidebook — house rules, local tips, appliance guides and more.</p>
+    <span class="card-badge badge-blue">$80 add-on service</span>
+  </a>
+
+  <a href="forms/contacts.html" class="card">
+    <div class="card-icon amber">👥</div>
+    <h2>Update contacts & preferences</h2>
+    <p>Update your emergency contacts, trusted trades, cleaner details, or any property preferences at any time.</p>
+    <span class="card-badge badge-amber">Existing owners</span>
+  </a>
+
+</div>
+
+<div class="footer">
+  © 2026 Wandernest Stays · contact.sarahjaneproperty@gmail.com · Wander More, Worry Less
+</div>
+
+</body>
+</html>

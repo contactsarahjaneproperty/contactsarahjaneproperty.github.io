@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guest Guidebook Request — Wandernest Stays</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', system-ui, sans-serif; background: #FAFAF8; color: #1A1A1A; }
+.nav { background: white; border-bottom: 1px solid #E5E5E5; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+.brand { font-family: 'DM Serif Display', serif; font-size: 20px; letter-spacing: -0.02em; }
+.brand span { color: #1D9E75; }
+.nav a { font-size: 13px; color: #4A9FD4; text-decoration: none; }
+
+.wrap { max-width: 660px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+
+.page-hero { margin-bottom: 2.5rem; }
+.eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #1D9E75; font-weight: 500; margin-bottom: 0.5rem; }
+.page-hero h1 { font-family: 'DM Serif Display', serif; font-size: 28px; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+.page-hero p { font-size: 14px; color: #4A4A4A; line-height: 1.65; }
+
+.price-banner {
+  background: linear-gradient(135deg, #E1F5EE, #D0F0E4);
+  border: 1px solid #9FE1CB;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.price-banner p { font-size: 13px; color: #085041; line-height: 1.55; }
+.price-banner strong { font-size: 22px; color: #0F6E56; font-family: 'DM Serif Display', serif; white-space: nowrap; }
+
+.section { margin-bottom: 2rem; }
+.section-title { font-family: 'DM Serif Display', serif; font-size: 18px; margin-bottom: 0.25rem; }
+.section-sub { font-size: 13px; color: #7A7A7A; margin-bottom: 1.25rem; line-height: 1.5; }
+
+.field { margin-bottom: 1.25rem; }
+.field label { display: block; font-size: 13px; font-weight: 500; color: #4A4A4A; margin-bottom: 0.35rem; }
+.field input, .field textarea, .field select {
+  width: 100%; border: 1px solid #E5E5E5; border-radius: 8px;
+  padding: 0.65rem 0.85rem; font-size: 14px; font-family: 'DM Sans', sans-serif;
+  color: #1A1A1A; background: white; line-height: 1.5;
+  transition: border-color 0.15s;
+}
+.field input:focus, .field textarea:focus, .field select:focus { outline: none; border-color: #1D9E75; box-shadow: 0 0 0 3px rgba(29,158,117,0.1); }
+.field textarea { resize: vertical; min-height: 90px; }
+.field .hint { font-size: 12px; color: #7A7A7A; margin-top: 0.3rem; line-height: 1.5; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+.cb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.5rem; }
+.cb { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: #1A1A1A; cursor: pointer; padding: 0.4rem 0; }
+.cb input { width: 15px; height: 15px; accent-color: #1D9E75; flex-shrink: 0; margin-top: 1px; }
+
+.divider { border: none; border-top: 1px solid #E5E5E5; margin: 2rem 0; }
+
+.submit-btn {
+  width: 100%; padding: 0.9rem; border: none; border-radius: 8px;
+  background: #1D9E75; color: white; font-size: 15px; font-weight: 600;
+  font-family: 'DM Sans', sans-serif; cursor: pointer; margin-top: 1rem;
+  transition: background 0.15s;
+}
+.submit-btn:hover { background: #0F6E56; }
+.submit-note { font-size: 12px; color: #7A7A7A; text-align: center; margin-top: 0.6rem; line-height: 1.5; }
+
+.success { display: none; text-align: center; padding: 3rem 1.5rem; }
+.success-icon { width: 64px; height: 64px; background: #E1F5EE; border: 2px solid #9FE1CB; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 1.5rem; }
+.success h2 { font-family: 'DM Serif Display', serif; font-size: 24px; margin-bottom: 0.5rem; }
+.success p { font-size: 14px; color: #4A4A4A; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="brand">Wandernest<span>.</span></div>
+  <a href="../index.html">← Back to portal</a>
+</nav>
+
+<div class="wrap" id="form-wrap">
+  <div class="page-hero">
+    <div class="eyebrow">Optional add-on service</div>
+    <h1>Guest guidebook request</h1>
+    <p>A beautifully designed digital guidebook makes guests feel welcomed, reduces repetitive questions, and consistently lifts review scores. We create it for you — all we need is the information below.</p>
+  </div>
+
+  <div class="price-banner">
+    <p>One-time setup fee. Includes design, layout, all content and a shareable digital link for guests. Updates available anytime.</p>
+    <strong>$80</strong>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Your details</div>
+    <div class="section-sub">So we can match this to your property file.</div>
+    <div class="two">
+      <div class="field"><label>Your name</label><input id="g-name" placeholder="Full name" /></div>
+      <div class="field"><label>Property address</label><input id="g-address" placeholder="e.g. 7 Corinna St, Falcon" /></div>
+    </div>
+    <div class="field"><label>Your email</label><input id="g-email" type="email" placeholder="your@email.com" /></div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-title">Welcome message</div>
+    <div class="section-sub">This sets the tone for guests arriving at your property.</div>
+    <div class="field">
+      <label>How would you like to welcome guests?</label>
+      <textarea id="g-welcome" placeholder="e.g. Welcome to our little piece of paradise! We hope you love it as much as we do. Make yourself at home — the kitchen is fully stocked and the BBQ is ready to go..."></textarea>
+      <div class="hint">Keep it warm and personal. We'll polish the writing for you.</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-title">Check-in & check-out</div>
+    <div class="two">
+      <div class="field"><label>Check-in time</label><input id="g-checkin" placeholder="e.g. 3:00 PM" /></div>
+      <div class="field"><label>Check-out time</label><input id="g-checkout" placeholder="e.g. 10:00 AM" /></div>
+    </div>
+    <div class="field">
+      <label>Step-by-step check-in instructions for guests</label>
+      <textarea id="g-entry" placeholder="From the street, through any gates, to the front door. The more detail the better — guests love clear guidance."></textarea>
+    </div>
+    <div class="field">
+      <label>Check-out instructions</label>
+      <textarea id="g-checkout-inst" placeholder="e.g. Strip beds, put used towels in laundry, lock up, return key to lockbox..."></textarea>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-title">House rules</div>
+    <div class="section-sub">These go prominently in the guidebook so guests are clear from the start.</div>
+    <div class="two">
+      <div class="field">
+        <label>Smoking</label>
+        <select id="g-smoking"><option value="">Select...</option><option>No smoking anywhere on property</option><option>Smoking allowed outside only</option></select>
+      </div>
+      <div class="field">
+        <label>Pets</label>
+        <select id="g-pets"><option value="">Select...</option><option>No pets</option><option>Pets welcome</option><option>Small pets only — pre-approved</option></select>
+      </div>
+    </div>
+    <div class="two">
+      <div class="field">
+        <label>Quiet hours</label>
+        <input id="g-quiet" placeholder="e.g. 10pm–7am" />
+      </div>
+      <div class="field">
+        <label>Events / parties</label>
+        <select id="g-events"><option value="">Select...</option><option>No events or parties</option><option>Small gatherings welcome</option></select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Any other house rules guests must know?</label>
+      <textarea id="g-rules" placeholder="Parking rules, pool rules, bin instructions, anything else..."></textarea>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-title">Appliance guides</div>
+    <div class="section-sub">Which appliances do guests sometimes need help with? We'll write clear instructions for each.</div>
+    <div class="cb-grid">
+      <label class="cb"><input type="checkbox" id="ap-tv"> Smart TV / streaming</label>
+      <label class="cb"><input type="checkbox" id="ap-ac"> Air conditioning</label>
+      <label class="cb"><input type="checkbox" id="ap-bbq"> BBQ</label>
+      <label class="cb"><input type="checkbox" id="ap-coffee"> Coffee machine</label>
+      <label class="cb"><input type="checkbox" id="ap-washer"> Washer / dryer</label>
+      <label class="cb"><input type="checkbox" id="ap-dishwasher"> Dishwasher</label>
+      <label class="cb"><input type="checkbox" id="ap-pool"> Pool / spa</label>
+      <label class="cb"><input type="checkbox" id="ap-sauna"> Sauna</label>
+      <label class="cb"><input type="checkbox" id="ap-games"> Games room equipment</label>
+      <label class="cb"><input type="checkbox" id="ap-outdoor"> Outdoor shower</label>
+      <label class="cb"><input type="checkbox" id="ap-alarm"> Alarm / security system</label>
+      <label class="cb"><input type="checkbox" id="ap-lock"> Smart lock / door code</label>
+    </div>
+    <div class="field" style="margin-top:1rem;">
+      <label>Any specific instructions or quirks we should know for any appliance?</label>
+      <textarea id="g-appliance-notes" placeholder="e.g. The BBQ takes 10 mins to heat up. The AC remote is in the bedside drawer. The smart lock auto-locks after 20 seconds..."></textarea>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-title">Local area guide</div>
+    <div class="section-sub">Your personal recommendations make the guidebook feel premium and genuinely helpful for guests.</div>
+    <div class="field">
+      <label>Top 3–5 restaurants or cafes you'd recommend nearby</label>
+      <textarea id="g-restaurants" placeholder="Name, what's great about it, and distance/direction from property..."></textarea>
+    </div>
+    <div class="field">
+      <label>Best beaches, parks or attractions nearby</label>
+      <textarea id="g-attractions" placeholder="Walking distance? Drive? Any local secrets guests wouldn't find on Google?"></textarea>
+    </div>
+    <div class="field">
+      <label>Supermarkets, bottle shops, petrol stations nearby</label>
+      <textarea id="g-practical" placeholder="Name and approximate distance..."></textarea>
+    </div>
+    <div class="field">
+      <label>Anything else guests should know about the local area?</label>
+      <textarea id="g-area-notes" placeholder="Local markets, events, seasonal things, hidden gems..."></textarea>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-title">Emergency information</div>
+    <div class="two">
+      <div class="field"><label>Nearest hospital / urgent care</label><input id="g-hospital" placeholder="Name and address" /></div>
+      <div class="field"><label>Nearest pharmacy</label><input id="g-pharmacy" placeholder="Name and address" /></div>
+    </div>
+    <div class="field">
+      <label>Emergency contacts for guests to call</label>
+      <textarea id="g-emergency" placeholder="e.g. For property emergencies contact Wandernest: 04xx xxx xxx. Local police: 000 for emergencies..."></textarea>
+    </div>
+    <div class="field">
+      <label>Fire escape plan / safety notes</label>
+      <textarea id="g-fire" placeholder="e.g. Exit via front door, assembly point on street. Fire extinguisher in kitchen. Smoke alarms tested monthly."></textarea>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-title">Style preferences</div>
+    <div class="section-sub">So the guidebook feels right for your property.</div>
+    <div class="two">
+      <div class="field">
+        <label>Property vibe / aesthetic</label>
+        <select id="g-vibe">
+          <option value="">Select...</option>
+          <option>Coastal / beach house</option>
+          <option>Modern & minimal</option>
+          <option>Warm & homey</option>
+          <option>Luxury / premium</option>
+          <option>Family-friendly</option>
+          <option>Rustic / country</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Tone of voice</label>
+        <select id="g-tone">
+          <option value="">Select...</option>
+          <option>Warm and friendly</option>
+          <option>Professional and polished</option>
+          <option>Fun and casual</option>
+          <option>Minimal and clean</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Anything else you'd like included in the guidebook?</label>
+      <textarea id="g-other" placeholder="Special features to highlight, things previous guests have loved, anything you want to make sure we capture..."></textarea>
+    </div>
+  </div>
+
+  <button class="submit-btn" onclick="submitGuidebook()">Submit guidebook request ↗</button>
+  <p class="submit-note">Once submitted, Sarah will review and be in touch within 2 business days. Your guidebook will be ready within 5 business days of confirmation.</p>
+</div>
+
+<div class="success" id="success-wrap">
+  <div class="success-icon">✓</div>
+  <h2>Guidebook request received!</h2>
+  <p>Thank you! Sarah will review your details and be in touch within 2 business days to confirm and get started on your guidebook.</p>
+</div>
+
+<script>
+async function submitGuidebook() {
+  const name = document.getElementById('g-name').value;
+  const address = document.getElementById('g-address').value;
+
+  if (!name || !address) {
+    alert('Please fill in at least your name and property address.');
+    return;
+  }
+
+  const summary = `
+GUIDEBOOK REQUEST
+Property: ${address}
+Owner: ${name} (${document.getElementById('g-email').value})
+
+WELCOME MESSAGE: ${document.getElementById('g-welcome').value}
+CHECK-IN: ${document.getElementById('g-checkin').value} | CHECK-OUT: ${document.getElementById('g-checkout').value}
+ENTRY INSTRUCTIONS: ${document.getElementById('g-entry').value}
+CHECKOUT INSTRUCTIONS: ${document.getElementById('g-checkout-inst').value}
+
+HOUSE RULES:
+Smoking: ${document.getElementById('g-smoking').value}
+Pets: ${document.getElementById('g-pets').value}
+Quiet hours: ${document.getElementById('g-quiet').value}
+Events: ${document.getElementById('g-events').value}
+Other rules: ${document.getElementById('g-rules').value}
+
+RESTAURANTS: ${document.getElementById('g-restaurants').value}
+ATTRACTIONS: ${document.getElementById('g-attractions').value}
+PRACTICAL: ${document.getElementById('g-practical').value}
+
+EMERGENCY: Hospital: ${document.getElementById('g-hospital').value}
+Fire escape: ${document.getElementById('g-fire').value}
+
+STYLE: ${document.getElementById('g-vibe').value} / ${document.getElementById('g-tone').value}
+OTHER: ${document.getElementById('g-other').value}
+  `.trim();
+
+  try {
+    const formData = new FormData();
+    formData.append('_subject', '📖 GUIDEBOOK REQUEST — ' + address);
+    formData.append('_replyto', document.getElementById('g-email').value);
+    formData.append('message', summary);
+    formData.append('_captcha', 'false');
+
+    await fetch('https://formsubmit.co/contact.sarahjaneproperty@gmail.com', {
+      method: 'POST', body: formData
+    });
+  } catch(e) { console.log('Email error:', e); }
+
+  document.getElementById('form-wrap').style.display = 'none';
+  document.getElementById('success-wrap').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
