@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wandernest Stays — Property Onboarding</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sage: #1D9E75;
+    --sage-dark: #0F6E56;
+    --sage-light: #E1F5EE;
+    --sage-border: #9FE1CB;
+    --amber: #EF9F27;
+    --amber-light: #FAEEDA;
+    --amber-border: #FAC775;
+    --ink: #1A1A1A;
+    --ink-mid: #4A4A4A;
+    --ink-soft: #7A7A7A;
+    --border: #E5E5E5;
+    --bg: #FAFAF8;
+    --white: #FFFFFF;
+    --radius: 8px;
+    --font-display: 'DM Serif Display', Georgia, serif;
+    --font-body: 'DM Sans', system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ─── SCREENS ─── */
+  .screen { display: none; min-height: 100vh; }
+  .screen.active { display: block; }
+
+  /* ─── FORM SCREEN ─── */
+  .form-screen { padding: 0 0 4rem; }
+
+  .form-topbar {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .brand { font-family: var(--font-display); font-size: 18px; color: var(--ink); letter-spacing: -0.02em; }
+  .brand span { color: var(--sage); }
+  .topbar-progress { display: flex; align-items: center; gap: 12px; }
+  .progress-steps { display: flex; gap: 4px; }
+  .ps { width: 20px; height: 3px; border-radius: 99px; background: var(--border); transition: background 0.3s; cursor: pointer; }
+  .ps.active { background: var(--sage); }
+  .ps.done { background: var(--sage-border); }
+  .progress-text { font-size: 12px; color: var(--ink-soft); white-space: nowrap; }
+
+  .form-body { max-width: 660px; margin: 0 auto; padding: 2.5rem 1.5rem 0; }
+
+  .form-hero { margin-bottom: 2.5rem; }
+  .form-hero .eyebrow { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--sage); font-weight: 500; margin-bottom: 0.5rem; }
+  .form-hero h1 { font-family: var(--font-display); font-size: 28px; color: var(--ink); line-height: 1.2; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+  .form-hero p { font-size: 14px; color: var(--ink-mid); line-height: 1.65; }
+
+  .status-bar { display: flex; gap: 0.75rem; margin-bottom: 2rem; flex-wrap: wrap; }
+  .status-pill { display: flex; align-items: center; gap: 6px; font-size: 12px; padding: 5px 10px; border-radius: 99px; border: 1px solid; }
+  .sp-green { background: var(--sage-light); border-color: var(--sage-border); color: var(--sage-dark); }
+  .sp-amber { background: var(--amber-light); border-color: var(--amber-border); color: #7A4A00; }
+  .sp-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .sp-green .sp-dot { background: var(--sage); }
+  .sp-amber .sp-dot { background: var(--amber); }
+
+  /* STEP */
+  .step { display: none; }
+  .step.active { display: block; }
+
+  .step-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft); font-weight: 500; margin-bottom: 1.5rem; }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    color: var(--ink);
+    margin-bottom: 0.25rem;
+    letter-spacing: -0.01em;
+  }
+  .section-sub { font-size: 13px; color: var(--ink-soft); margin-bottom: 1.75rem; line-height: 1.55; }
+
+  .field { margin-bottom: 1.25rem; }
+  .field label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-mid);
+    margin-bottom: 0.4rem;
+  }
+  .req { color: #C0392B; }
+  .badge-pre {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 99px;
+    background: var(--sage-light);
+    color: var(--sage-dark);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .badge-you {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 99px;
+    background: var(--amber-light);
+    color: #7A4A00;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+
+  .field input, .field textarea, .field select {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.65rem 0.85rem;
+    font-size: 14px;
+    font-family: var(--font-body);
+    color: var(--ink);
+    background: var(--white);
+    line-height: 1.5;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus {
+    outline: none;
+    border-color: var(--sage);
+    box-shadow: 0 0 0 3px rgba(29,158,117,0.1);
+  }
+  .field textarea { resize: vertical; min-height: 88px; }
+  .field .hint { font-size: 12px; color: var(--ink-soft); margin-top: 0.35rem; line-height: 1.5; }
+
+  .pre input, .pre textarea, .pre select {
+    background: #F0FBF6;
+    border-color: var(--sage-border);
+    color: var(--sage-dark);
+  }
+  .needs input, .needs textarea, .needs select {
+    background: #FFFBF2;
+    border-color: var(--amber-border);
+  }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .three { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; }
+
+  .callout {
+    border-radius: var(--radius);
+    padding: 0.9rem 1rem;
+    margin-bottom: 1.25rem;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .callout-green { background: var(--sage-light); border-left: 3px solid var(--sage); color: var(--sage-dark); }
+  .callout-blue { background: #EAF3FC; border-left: 3px solid #4A9FD4; color: #1A4A6E; }
+  .callout strong { font-weight: 600; }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 1.75rem 0; }
+  .sub-section-title { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  .radio-stack { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.4rem; }
+  .radio-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.45;
+    transition: border-color 0.15s;
+    background: var(--white);
+  }
+  .radio-card:hover { border-color: var(--sage); }
+  .radio-card input { margin-top: 2px; accent-color: var(--sage); flex-shrink: 0; }
+
+  .cb-wrap { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.5rem; }
+  .cb-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--ink);
+    cursor: pointer;
+    padding: 0.4rem 0;
+  }
+  .cb-item input { width: 15px; height: 15px; accent-color: var(--sage); flex-shrink: 0; }
+  .cb-item.checked { color: var(--sage-dark); font-weight: 500; }
+
+  .security-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    background: var(--white);
+  }
+  .security-card p { font-size: 13px; color: var(--ink); line-height: 1.55; margin-bottom: 0.65rem; }
+  .radio-row { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .radio-row label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-mid); cursor: pointer; }
+  .radio-row input { accent-color: var(--sage); }
+
+  .upsell {
+    border: 1px solid var(--sage-border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+    background: linear-gradient(135deg, #F0FBF6 0%, #E8F8F1 100%);
+  }
+  .upsell h3 { font-family: var(--font-display); font-size: 16px; color: var(--ink); margin-bottom: 0.35rem; }
+  .upsell p { font-size: 13px; color: var(--ink-mid); line-height: 1.6; margin-bottom: 0.9rem; }
+
+  /* NAV */
+  .step-nav {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .btn-back {
+    padding: 0.7rem 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--white);
+    font-size: 14px;
+    font-family: var(--font-body);
+    color: var(--ink-mid);
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .btn-back:hover { border-color: var(--sage); color: var(--sage); }
+  .btn-next {
+    flex: 1;
+    padding: 0.75rem;
+    border: none;
+    border-radius: var(--radius);
+    background: var(--sage);
+    font-size: 14px;
+    font-weight: 600;
+    font-family: var(--font-body);
+    color: white;
+    cursor: pointer;
+    letter-spacing: 0.01em;
+    transition: background 0.15s;
+  }
+  .btn-next:hover { background: var(--sage-dark); }
+
+  .btn-submit {
+    width: 100%;
+    padding: 0.9rem;
+    border: none;
+    border-radius: var(--radius);
+    background: var(--sage);
+    font-size: 15px;
+    font-weight: 600;
+    font-family: var(--font-body);
+    color: white;
+    cursor: pointer;
+    letter-spacing: 0.01em;
+    transition: background 0.15s;
+    margin-top: 1rem;
+  }
+  .btn-submit:hover { background: var(--sage-dark); }
+  .submit-note { font-size: 12px; color: var(--ink-soft); text-align: center; margin-top: 0.6rem; line-height: 1.55; }
+
+  /* ─── GENERATING SCREEN ─── */
+  .generating-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+    text-align: center;
+  }
+  .spinner {
+    width: 48px; height: 48px;
+    border: 3px solid var(--border);
+    border-top-color: var(--sage);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 1.5rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .generating-screen h2 { font-family: var(--font-display); font-size: 22px; margin-bottom: 0.5rem; }
+  .generating-screen p { font-size: 14px; color: var(--ink-soft); }
+
+  /* ─── REVIEW SCREEN ─── */
+  .review-screen { padding: 0 0 4rem; }
+  .review-topbar {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .review-body { max-width: 760px; margin: 0 auto; padding: 2.5rem 1.5rem 0; }
+  .review-hero { margin-bottom: 2rem; }
+  .review-hero .eyebrow { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--amber); font-weight: 500; margin-bottom: 0.5rem; }
+  .review-hero h1 { font-family: var(--font-display); font-size: 26px; letter-spacing: -0.02em; margin-bottom: 0.4rem; }
+  .review-hero p { font-size: 14px; color: var(--ink-mid); line-height: 1.6; }
+
+  .review-section { margin-bottom: 2rem; }
+  .review-section-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .review-section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .review-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  .review-item { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.75rem 1rem; }
+  .review-item .ril { font-size: 11px; color: var(--ink-soft); margin-bottom: 0.2rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .review-item .riv { font-size: 13px; color: var(--ink); line-height: 1.5; font-weight: 500; }
+  .review-item.full { grid-column: 1 / -1; }
+  .review-item.empty .riv { color: var(--amber); font-style: italic; font-weight: 400; }
+
+  .review-actions {
+    position: sticky;
+    bottom: 0;
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    padding: 1rem 2rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  .btn-reject {
+    padding: 0.65rem 1.25rem;
+    border: 1px solid #E5C0B8;
+    border-radius: var(--radius);
+    background: #FDF2F0;
+    color: #A0392B;
+    font-size: 14px;
+    font-family: var(--font-body);
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .btn-approve {
+    padding: 0.65rem 1.75rem;
+    border: none;
+    border-radius: var(--radius);
+    background: var(--sage);
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-approve:hover { background: var(--sage-dark); }
+  .review-note { font-size: 12px; color: var(--ink-soft); flex: 1; }
+
+  /* ─── SUCCESS SCREEN ─── */
+  .success-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+    text-align: center;
+  }
+  .success-icon {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: var(--sage-light);
+    border: 2px solid var(--sage-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin-bottom: 1.5rem;
+  }
+  .success-screen h2 { font-family: var(--font-display); font-size: 26px; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+  .success-screen p { font-size: 14px; color: var(--ink-mid); max-width: 400px; line-height: 1.6; margin-bottom: 1.5rem; }
+  .notion-status {
+    background: var(--sage-light);
+    border: 1px solid var(--sage-border);
+    border-radius: var(--radius);
+    padding: 1rem 1.5rem;
+    font-size: 13px;
+    color: var(--sage-dark);
+    max-width: 420px;
+    width: 100%;
+    text-align: left;
+    line-height: 1.7;
+  }
+  .notion-status strong { font-weight: 600; }
+
+  .btn-new-property {
+    margin-top: 1.5rem;
+    padding: 0.75rem 1.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--white);
+    font-size: 14px;
+    font-family: var(--font-body);
+    color: var(--ink-mid);
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     SCREEN 1: FORM
+═══════════════════════════════════════ -->
+<div id="screen-form" class="screen active form-screen">
+
+  <div class="form-topbar">
+    <div class="brand">Wandernest<span>.</span></div>
+    <div class="topbar-progress">
+      <div class="progress-steps" id="progress-steps"></div>
+      <div class="progress-text" id="progress-text">Step 1 of 8</div>
+    </div>
+  </div>
+
+  <div class="form-body">
+    <div class="form-hero">
+      <div class="eyebrow">Property Onboarding</div>
+      <h1 id="property-title">Dale's — 1/16 Wheatcroft St, Scarborough</h1>
+      <p>Hi Dale! We've done the heavy lifting — most of this is already filled in from what we know about your property. Just review, complete the amber fields, and submit. Takes around 5 minutes.</p>
+    </div>
+    <div class="status-bar">
+      <div class="status-pill sp-green"><div class="sp-dot"></div>80% pre-filled by Wandernest</div>
+      <div class="status-pill sp-amber"><div class="sp-dot"></div>A few fields need your input</div>
+    </div>
+
+    <!-- STEP 1: Owner Details -->
+    <div class="step active" id="step-0">
+      <div class="step-label">Step 1 of 8 — Your details</div>
+      <div class="section-title">Let's start with you</div>
+      <div class="section-sub">We have most of this — just fill in the gaps and we're good to go.</div>
+      <div class="two">
+        <div class="field pre"><label>Full name <span class="badge-pre">Pre-filled</span></label><input id="f-name" value="Dale Schnaars" /></div>
+        <div class="field pre"><label>Email <span class="badge-pre">Pre-filled</span></label><input id="f-email" value="daleschnaars1@outlook.com" /></div>
+      </div>
+      <div class="two">
+        <div class="field pre"><label>Phone <span class="badge-pre">Pre-filled</span></label><input id="f-phone" value="+61 439 517 585" /></div>
+        <div class="field"><label>ABN / Business name</label><input id="f-abn" placeholder="For invoicing — if applicable" /></div>
+      </div>
+      <div class="field needs"><label>Bank details for payouts <span class="req">*</span> <span class="badge-you">Your input</span></label><input id="f-bank" placeholder="BSB — Account number" /><div class="hint">Used solely for transferring your rental income. Kept securely on file.</div></div>
+      <div class="field needs"><label>Emergency / backup contact <span class="badge-you">Your input</span></label><input id="f-emergency" placeholder="Name, relationship, phone — a trusted local contact" /></div>
+      <div class="step-nav"><button class="btn-next" onclick="nextStep()">Next: Property details →</button></div>
+    </div>
+
+    <!-- STEP 2: Property -->
+    <div class="step" id="step-1">
+      <div class="step-label">Step 2 of 8 — Property overview</div>
+      <div class="section-title">About the property</div>
+      <div class="section-sub">Your property details — confirm what we have and fill in the rest.</div>
+      <div class="two">
+        <div class="field pre"><label>Property type <span class="badge-pre">Pre-filled</span></label><input id="f-type" value="Unit" /></div>
+        <div class="field pre"><label>STRA registration <span class="badge-pre">Pre-filled</span></label><input id="f-stra" value="STRA6019CZ5WHX6G" /></div>
+      </div>
+      <div class="three">
+        <div class="field pre"><label>Bedrooms <span class="badge-pre">Pre-filled</span></label><input id="f-beds" value="2 bedrooms, 3 beds" /></div>
+        <div class="field pre"><label>Bathrooms <span class="badge-pre">Pre-filled</span></label><input id="f-baths" value="1 private" /></div>
+        <div class="field pre"><label>Max guests <span class="badge-pre">Pre-filled</span></label><input id="f-guests" value="4 guests" /></div>
+      </div>
+      <div class="field pre"><label>Bed configuration <span class="badge-pre">Pre-filled</span></label><input id="f-bedconfig" value="Bedroom 1: 1x Queen. Bedroom 2: 2x Singles." /><div class="hint">Please confirm — and note if any bed uses an oversized duvet (e.g. king duvet on the queen). Critical for linen setup.</div></div>
+      <div class="field pre"><label>Cleaning supplies on site <span class="badge-pre">Pre-filled</span></label><textarea id="f-cleaning">Vacuum and mop on site. Cleaning supplies stored in the cleaning cupboard (code: 2008).</textarea></div>
+      <div class="field needs"><label>Additional supplies / toiletries storage <span class="badge-you">Your input</span></label><input id="f-toiletries" placeholder="Toilet paper, towels, extra supplies — where are they stored?" /></div>
+      <div class="field needs"><label>Linen situation <span class="req">*</span> <span class="badge-you">Your input</span></label>
+        <select id="f-linen"><option value="">Select...</option><option>I have 3 complete sets per bed — all sorted</option><option>I have linen but need help with management</option><option>Interested in Wandernest linen hire service</option><option>Let's discuss further</option></select>
+      </div>
+      <div class="field needs"><label>Bin day(s) & bin location <span class="req">*</span> <span class="badge-you">Your input</span></label><input id="f-bins" placeholder="e.g. Tuesday general, Friday recycling — bins in complex bin bay" /></div>
+      <div class="field needs"><label>Utility locations <span class="badge-you">Your input</span></label><textarea id="f-utilities" placeholder="Circuit breaker? Water shut-off? Internet router? Gas shut-off?"></textarea></div>
+      <div class="field needs"><label>Sauna maintenance <span class="badge-you">Your input</span></label><textarea id="f-sauna" placeholder="Any regular maintenance? Who services it? Any checks we should know?"></textarea></div>
+      <div class="field needs"><label>Appliance details <span class="badge-you">Your input</span></label><textarea id="f-appliances" placeholder="Washer/dryer brand? Oven? BBQ type (gas/charcoal)? AC brand?"></textarea></div>
+      <div class="step-nav"><button class="btn-back" onclick="prevStep()">← Back</button><button class="btn-next" onclick="nextStep()">Next: Access & WiFi →</button></div>
+    </div>
+
+    <!-- STEP 3: Access & WiFi -->
+    <div class="step" id="step-2">
+      <div class="step-label">Step 3 of 8 — Access & WiFi</div>
+      <div class="section-title">Getting in & getting online</div>
+      <div class="callout callout-green">Almost all of this is pre-filled. Just confirm and add anything missing.</div>
+      <div class="two">
+        <div class="field pre"><label>Door code <span class="badge-pre">Pre-filled</span></label><input id="f-doorcode" value="1104" /></div>
+        <div class="field pre"><label>Lock type <span class="badge-pre">Pre-filled</span></label><input id="f-locktype" value="TTLock keypad + TTLock app" /></div>
+      </div>
+      <div class="field pre"><label>Entry instructions <span class="badge-pre">Pre-filled</span></label><textarea id="f-entry">Enter 1104 on keypad, press padlock icon. Auto-locks after 20 seconds. TTLock app available for remote lock/unlock. Ring doorbell on front for security. Backup manual key available — contact Wandernest for location.</textarea></div>
+      <div class="field pre"><label>Parking <span class="badge-pre">Pre-filled</span></label><textarea id="f-parking">1 allocated space for Unit 1 within complex car park. Additional free street parking nearby. Do not park on grass or obstruct pathways.</textarea></div>
+      <div class="field pre"><label>Backup key safe code <span class="badge-pre">Pre-filled</span></label><input id="f-safeCode" value="2008" /></div>
+      <div class="field needs"><label>Key safe physical location <span class="req">*</span> <span class="badge-you">Your input</span></label><input id="f-safeLocation" placeholder="Where is it located? e.g. beside front door, gate post..." /></div>
+      <div class="field needs"><label>Complex / gate access code <span class="badge-you">Your input</span></label><input id="f-gateCode" placeholder="Code to enter the complex or car park — if applicable" /></div>
+      <div class="field"><label>Alarm codes</label><input id="f-alarm" placeholder="Internal / external — if applicable" /></div>
+      <div class="two">
+        <div class="field pre"><label>WiFi name <span class="badge-pre">Pre-filled</span></label><input id="f-wifi" value="Telstra26CC76" /></div>
+        <div class="field pre"><label>WiFi password <span class="badge-pre">Pre-filled</span></label><input id="f-wifipass" value="5Wwuyemj" /></div>
+      </div>
+      <div class="field pre"><label>Guest-facing WiFi name <span class="badge-pre">Pre-filled</span></label><input id="f-wifiguest" value="Home WiFi" /><div class="hint">Confirm this matches what guests see on their device.</div></div>
+      <div class="field pre"><label>Smart devices <span class="badge-pre">Pre-filled</span></label><textarea id="f-smart">TTLock app (remote door lock/unlock). Ring doorbell (front door security). Smart TV with Netflix, Disney+ and built-in streaming. Nespresso Vertuo coffee machine.</textarea></div>
+      <div class="step-nav"><button class="btn-back" onclick="prevStep()">← Back</button><button class="btn-next" onclick="nextStep()">Next: Pricing →</button></div>
+    </div>
+
+    <!-- STEP 4: Pricing -->
+    <div class="step" id="step-3">
+      <div class="step-label">Step 4 of 8 — Pricing preferences</div>
+      <div class="section-title">Your pricing strategy</div>
+      <div class="section-sub">The more you share, the better we can position your property for maximum returns.</div>
+      <div class="sub-section-title">Past performance (skip if new to hosting)</div>
+      <div class="two">
+        <div class="field"><label>Average nightly rate (past 6 months)</label><input id="f-avgrate" placeholder="e.g. $180/night" /></div>
+        <div class="field"><label>Average monthly revenue</label><input id="f-avgrev" placeholder="e.g. $3,200/month" /></div>
+      </div>
+      <div class="field"><label>Happy to share your Airbnb performance data with us?</label>
+        <div class="radio-stack">
+          <label class="radio-card"><input type="radio" name="data" value="Yes"> Yes — happy for you to review it</label>
+          <label class="radio-card"><input type="radio" name="data" value="No"> No — I'd prefer not to</label>
+        </div>
+      </div>
+      <hr class="divider">
+      <div class="sub-section-title">Your pricing goals</div>
+      <div class="two">
+        <div class="field needs"><label>Minimum nightly rate <span class="req">*</span> <span class="badge-you">Your input</span></label><input id="f-minrate" type="number" placeholder="$ — floor we never go below" /></div>
+        <div class="field"><label>Ideal monthly income target</label><input id="f-target" placeholder="e.g. $3,500/month" /></div>
+      </div>
+      <div class="field needs"><label>Occupancy goal <span class="req">*</span> <span class="badge-you">Your input</span></label>
+        <div class="radio-stack">
+          <label class="radio-card"><input type="radio" name="occ" value="Higher occupancy"> Higher occupancy at slightly lower nightly rates — keep it booked</label>
+          <label class="radio-card"><input type="radio" name="occ" value="Higher rates"> Fewer bookings at higher nightly rates — quality over quantity</label>
+          <label class="radio-card"><input type="radio" name="occ" value="Balanced"> Balanced — optimise both as conditions change</label>
+        </div>
+      </div>
+      <div class="field needs"><label>Dynamic (demand-based) pricing <span class="badge-you">Your input</span></label>
+        <div class="radio-stack">
+          <label class="radio-card"><input type="radio" name="dyn" value="Yes"> Yes — adjust rates based on demand, weekends, seasons</label>
+          <label class="radio-card"><input type="radio" name="dyn" value="Mostly"> Mostly yes — but check with me for significant changes</label>
+          <label class="radio-card"><input type="radio" name="dyn" value="No"> No — I prefer a consistent rate</label>
+        </div>
+      </div>
+      <div class="field"><label>Minimum stay requirements</label><input id="f-minstay" placeholder="e.g. 2 nights standard, 3 nights on long weekends" /></div>
+      <div class="field"><label>Dates unavailable / personal stays</label><textarea id="f-blocked" placeholder="Any blocks we should know about — holidays, maintenance, personal use..."></textarea></div>
+      <div class="field"><label>Any other pricing thoughts?</label><textarea id="f-pricenotes" placeholder="Anything else that should guide how we price your property..."></textarea></div>
+      <div class="step-nav"><button class="btn-back" onclick="prevStep()">← Back</button><button class="btn-next" onclick="nextStep()">Next: Operations →</button></div>
+    </div>
+
+    <!-- STEP 5: Operations -->
+    <div class="step" id="step-4">
+      <div class="step-label">Step 5 of 8 — Operations & contacts</div>
+      <div class="section-title">Operations & local contacts</div>
+      <div class="section-sub">Share existing contacts you'd like us to work with. We have trusted vetted partners for anything you don't have covered.</div>
+      <div class="field needs"><label>Do you currently have a cleaner? <span class="badge-you">Your input</span></label>
+        <div class="radio-stack">
+          <label class="radio-card"><input type="radio" name="clean" value="Yes"> Yes — details below</label>
+          <label class="radio-card"><input type="radio" name="clean" value="No"> No — please use Wandernest's cleaners</label>
+        </div>
+      </div>
+      <div class="field"><label>Cleaner details (if applicable)</label><textarea id="f-cleaner" placeholder="Name, phone/email, availability, notes on quality or expectations..."></textarea></div>
+      <div class="field"><label>Trusted neighbour / local contact</label><input id="f-neighbour" placeholder="Name, phone, relationship — someone with permission to access if needed" /></div>
+      <div class="field"><label>Maintenance / handyman contact</label><textarea id="f-handyman" placeholder="Name, contact details, trusted trades — or we can recommend our vetted partners"></textarea></div>
+      <div class="field"><label>Other trusted trades (gardener, pest etc.)</label><textarea id="f-trades" placeholder="Name, service, contact — or state N/A"></textarea></div>
+      <hr class="divider">
+      <div class="field needs"><label>How would you like operations handled? <span class="badge-you">Your input</span></label>
+        <div class="radio-stack">
+          <label class="radio-card"><input type="radio" name="ops" value="Existing contacts"> Use my existing trusted contacts where possible</label>
+          <label class="radio-card"><input type="radio" name="ops" value="Wandernest partners"> Use Wandernest's vetted local partners</label>
+          <label class="radio-card"><input type="radio" name="ops" value="Hybrid"> Hybrid — combine both where it makes sense</label>
+          <label class="radio-card"><input type="radio" name="ops" value="Open to recommendations"> Happy for you to recommend and onboard suitable providers</label>
+        </div>
+      </div>
+      <div class="field needs"><label>Your preferred involvement level <span class="badge-you">Your input</span></label>
+        <div class="radio-stack">
+          <label class="radio-card"><input type="radio" name="inv" value="Hands-off"> Fully hands-off — you coordinate everything</label>
+          <label class="radio-card"><input type="radio" name="inv" value="Collaborative"> Collaborative — agree on key decisions together</label>
+          <label class="radio-card"><input type="radio" name="inv" value="High involvement"> High involvement — I approve most contractors and costs</label>
+        </div>
+      </div>
+      <div class="field needs"><label>Cost philosophy <span class="badge-you">Your input</span></label>
+        <div class="radio-stack">
+          <label class="radio-card"><input type="radio" name="cost" value="Minimise costs"> Minimising operational costs</label>
+          <label class="radio-card"><input type="radio" name="cost" value="Premium service"> Premium service and guest experience above all</label>
+          <label class="radio-card"><input type="radio" name="cost" value="Balanced"> Balanced — good quality at a sensible cost</label>
+        </div>
+      </div>
+      <hr class="divider">
+      <div class="callout callout-green"><strong>On pets — our recommendation:</strong> Allowing pets typically unlocks a larger pool of guests, supports higher nightly rates, and significantly improves calendar visibility. We screen all pet requests carefully, and guests with pets agree to additional house rules before booking. It's always your call — case-by-case approval is also an option.</div>
+      <div class="field needs"><label>Pets allowed? <span class="badge-you">Your input</span></label>
+        <div class="radio-stack">
+          <label class="radio-card"><input type="radio" name="pets" value="Yes - screened"> Yes — open to pets (screened and approved per booking)</label>
+          <label class="radio-card"><input type="radio" name="pets" value="Case by case"> Case by case — check with me for each pet request</label>
+          <label class="radio-card"><input type="radio" name="pets" value="No"> No pets — prefer to keep the property pet-free</label>
+        </div>
+      </div>
+      <div class="two">
+        <div class="field needs"><label>Children welcome? <span class="badge-you">Your input</span></label>
+          <select id="f-children"><option value="">Select...</option><option>Yes — all ages (cot & high chair available)</option><option>Over 5s only</option><option>No children</option></select>
+        </div>
+        <div class="field needs"><label>Events / gatherings? <span class="badge-you">Your input</span></label>
+          <select id="f-events"><option value="">Select...</option><option>No events or parties</option><option>Small gatherings OK</option><option>Check with me first</option></select>
+        </div>
+      </div>
+      <div class="step-nav"><button class="btn-back" onclick="prevStep()">← Back</button><button class="btn-next" onclick="nextStep()">Next: Security preferences →</button></div>
+    </div>
+
+    <!-- STEP 6: Security -->
+    <div class="step" id="step-5">
+      <div class="step-label">Step 6 of 8 — Security & escalation</div>
+      <div class="section-title">How we handle issues</div>
+      <div class="callout callout-blue">These guide how we respond to guest issues on your behalf. No right or wrong answers — we just want to act in line with what you're comfortable with.</div>
+      <div class="security-card">
+        <p>In the event of guest noise complaints or suspected unauthorised gatherings, are you comfortable with us contacting nearby neighbours or strata to gather further information?</p>
+        <div class="radio-row">
+          <label><input type="radio" name="q1" value="Yes"> Yes, comfortable</label>
+          <label><input type="radio" name="q1" value="Notify first"> Yes, but notify me first</label>
+          <label><input type="radio" name="q1" value="No"> No — contact me directly</label>
+        </div>
+      </div>
+      <div class="security-card">
+        <p>If ongoing disturbances or guest breaches occur, are you comfortable with us using available deterrent or security features — such as sirens or warning systems linked to security devices?</p>
+        <div class="radio-row">
+          <label><input type="radio" name="q2" value="Yes"> Yes, comfortable</label>
+          <label><input type="radio" name="q2" value="Notify first"> Yes, but notify me first</label>
+          <label><input type="radio" name="q2" value="No"> No — check with me</label>
+        </div>
+      </div>
+      <div class="security-card">
+        <p>For significant guest breaches, are you comfortable with us taking immediate operational action — such as removing access, changing door codes, or contacting Airbnb Safety — with owner notification provided as soon as practical afterwards?</p>
+        <div class="radio-row">
+          <label><input type="radio" name="q3" value="Act first"> Yes — act first, inform me after</label>
+          <label><input type="radio" name="q3" value="Simultaneously"> Inform me simultaneously</label>
+          <label><input type="radio" name="q3" value="Consult first"> Consult me before acting</label>
+        </div>
+      </div>
+      <div class="field"><label>Situations where you'd prefer to be consulted before action</label><textarea id="f-consult" placeholder="e.g. Decisions involving costs above a certain threshold, legal matters..."></textarea></div>
+      <div class="field"><label>Preferred emergency / security contacts to prioritise</label><textarea id="f-secContacts" placeholder="Name, role, contact number — specific locksmith, security company, trusted local..."></textarea></div>
+      <div class="step-nav"><button class="btn-back" onclick="prevStep()">← Back</button><button class="btn-next" onclick="nextStep()">Next: Add-ons →</button></div>
+    </div>
+
+    <!-- STEP 7: Add-ons -->
+    <div class="step" id="step-6">
+      <div class="step-label">Step 7 of 8 — Optional add-ons</div>
+      <div class="section-title">A couple of things worth considering</div>
+      <div class="section-sub">No obligation — just want to make sure you're aware of what's available.</div>
+      <div class="upsell">
+        <h3>📖 Professional guest guidebook</h3>
+        <p>A beautifully designed digital guidebook improves guest experience, reduces repetitive questions, and is proven to lift review scores and repeat bookings. We create it for you — house rules, appliance guides, local recommendations, check-in instructions and more.</p>
+        <div class="radio-stack">
+          <label class="radio-card"><input type="radio" name="guide" value="Yes"> Yes — I'd love a guidebook for my property</label>
+          <label class="radio-card"><input type="radio" name="guide" value="Tell me more"> Interested — please tell me more before I decide</label>
+          <label class="radio-card"><input type="radio" name="guide" value="No"> Not right now</label>
+        </div>
+      </div>
+      <div class="upsell">
+        <h3>📋 STRA registration & council planning approval</h3>
+        <p>Some properties require local council planning approval in addition to STRA registration. We can manage the full process — preparing applications and liaising with councils on your behalf.</p>
+        <div class="field pre" style="margin: 0.75rem 0 0.9rem;">
+          <label>Your STRA number <span class="badge-pre">Pre-filled</span></label>
+          <input value="STRA6019CZ5WHX6G" />
+        </div>
+        <div class="radio-stack">
+          <label class="radio-card"><input type="radio" name="stra" value="All sorted"> I have my STRA registration sorted</label>
+          <label class="radio-card"><input type="radio" name="stra" value="Sorting myself"> I'll sort my own STRA registration</label>
+          <label class="radio-card"><input type="radio" name="stra" value="Help with STRA"> I'd like Wandernest's help with STRA registration</label>
+          <label class="radio-card"><input type="radio" name="stra" value="Help with both"> I'd like help with both STRA and council planning approval</label>
+        </div>
+      </div>
+      <div class="step-nav"><button class="btn-back" onclick="prevStep()">← Back</button><button class="btn-next" onclick="nextStep()">Next: Confirm amenities →</button></div>
+    </div>
+
+    <!-- STEP 8: Amenities -->
+    <div class="step" id="step-7">
+      <div class="step-label">Step 8 of 8 — Amenities</div>
+      <div class="section-title">Confirm what's in the property</div>
+      <div class="section-sub">Green = confirmed from your listing. Tick anything else. Unticked items are potential quick wins — we'll share our recommendations after you submit.</div>
+      <div class="cb-wrap" id="amenities-wrap">
+        <!-- Rendered by JS -->
+      </div>
+      <div class="field" style="margin-top:1.5rem;"><label>Anything else we should know?</label><textarea id="f-notes" placeholder="Quirks, upcoming changes, things guests often ask about..."></textarea></div>
+      <div style="padding-top:1.5rem; border-top:1px solid var(--border); margin-top:1.5rem;">
+        <button class="btn-submit" onclick="handleSubmit()">Submit to Wandernest for review ↗</button>
+        <p class="submit-note">Once submitted, Sarah will be notified and can review before anything is updated in our system.</p>
+      </div>
+      <div style="margin-top:0.75rem;"><button class="btn-back" onclick="prevStep()">← Back</button></div>
+    </div>
+
+  </div><!-- /form-body -->
+</div>
+
+<!-- ═══════════════════════════════════════
+     SCREEN 2: GENERATING
+═══════════════════════════════════════ -->
+<div id="screen-generating" class="screen">
+  <div class="generating-screen">
+    <div class="spinner"></div>
+    <h2>Preparing your property file…</h2>
+    <p>Generating the PDF and notifying Sarah for review.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SCREEN 3: REVIEW (Sarah's view)
+═══════════════════════════════════════ -->
+<div id="screen-review" class="screen review-screen">
+  <div class="review-topbar">
+    <div class="brand">Wandernest<span>.</span> <span style="font-size:13px;font-family:var(--font-body);color:var(--ink-soft);font-weight:400;margin-left:8px;">Review Dashboard</span></div>
+    <div style="font-size:12px;color:var(--ink-soft);">Logged in as Sarah Jane</div>
+  </div>
+  <div class="review-body">
+    <div class="review-hero">
+      <div class="eyebrow" style="color:var(--amber);">⏳ Awaiting your review</div>
+      <h1 id="review-title">Dale's — 1/16 Wheatcroft St, Scarborough</h1>
+      <p>Dale submitted his onboarding form. Review the details below. Once you approve, this will push automatically to his Notion property page and your access codes / WiFi database.</p>
+    </div>
+    <div id="review-content"></div>
+  </div>
+  <div class="review-actions">
+    <div class="review-note">Approving will push all data to Notion automatically.</div>
+    <button class="btn-reject" onclick="requestChanges()">↩ Request changes</button>
+    <button class="btn-approve" onclick="approveAndPushToNotion()">✓ Approve & push to Notion</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SCREEN 4: SUCCESS
+═══════════════════════════════════════ -->
+<div id="screen-success" class="screen">
+  <div class="success-screen">
+    <div class="success-icon">✓</div>
+    <h2>All done — pushed to Notion</h2>
+    <p>Dale's property page has been updated and all access codes, WiFi details and preferences are live in your databases.</p>
+    <div class="notion-status">
+      <strong>Updated in Notion:</strong><br>
+      ✅ Dale's property page — all sections filled<br>
+      ✅ Access codes database — door code, safe code, gate code<br>
+      ✅ WiFi database — network name & password<br>
+      ✅ Pricing preferences — min rate, goals, dynamic pricing<br>
+      ✅ Operations & contacts — cleaner, handyman, preferences<br>
+      ✅ Amenities list — confirmed & updated
+    </div>
+    <button class="btn-new-property" onclick="startNewProperty()">+ Start next property onboarding</button>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ──────────────────────────────────────────────
+const OWNER_EMAIL = 'contact.sarahjaneproperty@gmail.com';
+const NOTION_PAGE_URL = 'https://www.notion.so/Emilys-121-Myrlea-Trail-Alkimos-32ba306171bf80a78d90ec923b2fed20'; // replace per property
+
+// ── STEP LOGIC ──────────────────────────────────────────
+let currentStep = 0;
+const totalSteps = 8;
+
+function buildProgressSteps() {
+  const wrap = document.getElementById('progress-steps');
+  wrap.innerHTML = '';
+  for (let i = 0; i < totalSteps; i++) {
+    const d = document.createElement('div');
+    d.className = 'ps' + (i === 0 ? ' active' : '');
+    d.onclick = () => goToStep(i);
+    wrap.appendChild(d);
+  }
+}
+
+function updateProgress() {
+  const pills = document.querySelectorAll('.ps');
+  pills.forEach((p, i) => {
+    p.className = 'ps';
+    if (i < currentStep) p.classList.add('done');
+    else if (i === currentStep) p.classList.add('active');
+  });
+  document.getElementById('progress-text').textContent = `Step ${currentStep + 1} of ${totalSteps}`;
+}
+
+function goToStep(n) {
+  document.getElementById(`step-${currentStep}`).classList.remove('active');
+  currentStep = n;
+  document.getElementById(`step-${currentStep}`).classList.add('active');
+  updateProgress();
+  window.scrollTo(0, 0);
+}
+
+function nextStep() {
+  if (currentStep < totalSteps - 1) goToStep(currentStep + 1);
+}
+function prevStep() {
+  if (currentStep > 0) goToStep(currentStep - 1);
+}
+
+// ── AMENITIES ───────────────────────────────────────────
+const amenities = [
+  { label: 'Air conditioning', checked: true },
+  { label: 'Ceiling fans (all rooms)', checked: true },
+  { label: 'Private sauna', checked: true },
+  { label: 'Outdoor BBQ', checked: true },
+  { label: 'Smart TV', checked: true },
+  { label: 'Netflix', checked: true },
+  { label: 'Disney+', checked: true },
+  { label: 'Fast WiFi', checked: true },
+  { label: 'Fully equipped kitchen', checked: true },
+  { label: 'Coffee machine (Nespresso)', checked: true },
+  { label: 'Complimentary coffee pods', checked: true },
+  { label: 'Air fryer', checked: true },
+  { label: 'Rice cooker', checked: true },
+  { label: 'Blender', checked: true },
+  { label: '2-in-1 washer/dryer', checked: true },
+  { label: 'Quality linen', checked: true },
+  { label: 'Travel pram', checked: true },
+  { label: 'Cot', checked: true },
+  { label: 'High chair', checked: true },
+  { label: 'Free parking (allocated)', checked: true },
+  { label: 'Free street parking', checked: true },
+  { label: 'Self check-in (TTLock)', checked: true },
+  { label: 'Ring doorbell', checked: true },
+  { label: 'Smoke alarm', checked: true },
+  { label: 'Dishwasher', checked: false },
+  { label: 'Iron & ironing board', checked: false },
+  { label: 'Hair dryer', checked: false },
+  { label: 'Microwave', checked: false },
+  { label: 'Outdoor dining area', checked: false },
+  { label: 'Patio / balcony', checked: false },
+  { label: 'Outdoor furniture', checked: false },
+  { label: 'Portable fans', checked: false },
+  { label: 'First aid kit', checked: false },
+  { label: 'Fire extinguisher', checked: false },
+  { label: 'Carbon monoxide alarm', checked: false },
+  { label: 'Board games / books', checked: false },
+  { label: 'Exercise equipment', checked: false },
+  { label: 'EV charger', checked: false },
+  { label: 'Safe', checked: false },
+  { label: 'Dedicated workspace', checked: false },
+  { label: 'Baby bath', checked: false },
+  { label: "Children's toys / books", checked: false },
+];
+
+function buildAmenities() {
+  const wrap = document.getElementById('amenities-wrap');
+  amenities.forEach((a, i) => {
+    const label = document.createElement('label');
+    label.className = 'cb-item' + (a.checked ? ' checked' : '');
+    label.innerHTML = `<input type="checkbox" id="am-${i}" ${a.checked ? 'checked' : ''}> ${a.label}`;
+    wrap.appendChild(label);
+  });
+}
+
+// ── COLLECT DATA ─────────────────────────────────────────
+function collectData() {
+  const r = (name) => {
+    const el = document.querySelector(`input[name="${name}"]:checked`);
+    return el ? el.value : '—';
+  };
+  const v = (id) => {
+    const el = document.getElementById(id);
+    return el ? (el.value.trim() || '—') : '—';
+  };
+  const checkedAmenities = amenities.map((a, i) => {
+    const cb = document.getElementById(`am-${i}`);
+    return cb && cb.checked ? a.label : null;
+  }).filter(Boolean);
+
+  return {
+    property: 'Dale\'s — 1/16 Wheatcroft St, Scarborough',
+    owner: { name: v('f-name'), email: v('f-email'), phone: v('f-phone'), abn: v('f-abn'), bank: v('f-bank'), emergency: v('f-emergency') },
+    property_details: { type: v('f-type'), stra: v('f-stra'), beds: v('f-beds'), baths: v('f-baths'), guests: v('f-guests'), bedconfig: v('f-bedconfig'), cleaning: v('f-cleaning'), toiletries: v('f-toiletries'), linen: v('f-linen'), bins: v('f-bins'), utilities: v('f-utilities'), sauna: v('f-sauna'), appliances: v('f-appliances') },
+    access: { doorcode: v('f-doorcode'), locktype: v('f-locktype'), entry: v('f-entry'), parking: v('f-parking'), safeCode: v('f-safeCode'), safeLocation: v('f-safeLocation'), gateCode: v('f-gateCode'), alarm: v('f-alarm'), wifi: v('f-wifi'), wifipass: v('f-wifipass'), wifiguest: v('f-wifiguest'), smart: v('f-smart') },
+    pricing: { avgrate: v('f-avgrate'), avgrev: v('f-avgrev'), shareData: r('data'), minrate: v('f-minrate'), target: v('f-target'), occ: r('occ'), dyn: r('dyn'), minstay: v('f-minstay'), blocked: v('f-blocked'), pricenotes: v('f-pricenotes') },
+    operations: { hasClean: r('clean'), cleaner: v('f-cleaner'), neighbour: v('f-neighbour'), handyman: v('f-handyman'), trades: v('f-trades'), ops: r('ops'), inv: r('inv'), cost: r('cost'), pets: r('pets'), children: v('f-children'), events: v('f-events') },
+    security: { q1: r('q1'), q2: r('q2'), q3: r('q3'), consult: v('f-consult'), secContacts: v('f-secContacts') },
+    addons: { guide: r('guide'), stra: r('stra') },
+    amenities: checkedAmenities,
+    notes: v('f-notes'),
+    submitted: new Date().toLocaleString('en-AU', { timeZone: 'Australia/Perth' })
+  };
+}
+
+// ── GENERATE PDF ─────────────────────────────────────────
+async function generatePDF(data) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const pw = 210; const ph = 297; const ml = 18; const mr = 18; const tw = pw - ml - mr;
+  let y = 0;
+
+  const checkPage = (needed = 10) => {
+    if (y + needed > ph - 15) { doc.addPage(); y = 18; }
+  };
+
+  // Header bar
+  doc.setFillColor(29, 158, 117);
+  doc.rect(0, 0, pw, 22, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(14); doc.setFont('helvetica', 'bold');
+  doc.text('WANDERNEST STAYS', ml, 10);
+  doc.setFontSize(9); doc.setFont('helvetica', 'normal');
+  doc.text('Property Onboarding File', ml, 16);
+  doc.text(`Generated: ${data.submitted}`, pw - mr, 16, { align: 'right' });
+
+  y = 30;
+  doc.setTextColor(26, 26, 26);
+  doc.setFontSize(16); doc.setFont('helvetica', 'bold');
+  doc.text(data.property, ml, y); y += 8;
+  doc.setDrawColor(29, 158, 117); doc.setLineWidth(0.5);
+  doc.line(ml, y, pw - mr, y); y += 8;
+
+  const section = (title) => {
+    checkPage(14);
+    doc.setFillColor(240, 251, 246);
+    doc.rect(ml, y - 5, tw, 9, 'F');
+    doc.setTextColor(15, 110, 86); doc.setFontSize(9); doc.setFont('helvetica', 'bold');
+    doc.text(title.toUpperCase(), ml + 2, y + 0.5);
+    doc.setTextColor(26, 26, 26);
+    y += 8;
+  };
+
+  const row = (label, value) => {
+    checkPage(8);
+    doc.setFontSize(8); doc.setFont('helvetica', 'bold');
+    doc.setTextColor(100, 100, 100);
+    doc.text(label, ml, y);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(26, 26, 26);
+    const lines = doc.splitTextToSize(value || '—', tw - 55);
+    doc.text(lines, ml + 55, y);
+    y += Math.max(6, lines.length * 5);
+    checkPage(2);
+  };
+
+  section('OWNER DETAILS');
+  row('Full Name', data.owner.name);
+  row('Email', data.owner.email);
+  row('Phone', data.owner.phone);
+  row('ABN / Business', data.owner.abn);
+  row('Bank Details', data.owner.bank);
+  row('Emergency Contact', data.owner.emergency);
+  y += 4;
+
+  section('PROPERTY DETAILS');
+  row('Type', data.property_details.type);
+  row('STRA Registration', data.property_details.stra);
+  row('Bedrooms / Beds', data.property_details.beds);
+  row('Bathrooms', data.property_details.baths);
+  row('Max Guests', data.property_details.guests);
+  row('Bed Configuration', data.property_details.bedconfig);
+  row('Cleaning Supplies', data.property_details.cleaning);
+  row('Toiletries Storage', data.property_details.toiletries);
+  row('Linen', data.property_details.linen);
+  row('Bin Day & Location', data.property_details.bins);
+  row('Utility Locations', data.property_details.utilities);
+  row('Sauna Maintenance', data.property_details.sauna);
+  row('Appliance Details', data.property_details.appliances);
+  y += 4;
+
+  section('ACCESS & WIFI');
+  row('Door Code', data.access.doorcode);
+  row('Lock Type', data.access.locktype);
+  row('Entry Instructions', data.access.entry);
+  row('Parking', data.access.parking);
+  row('Key Safe Code', data.access.safeCode);
+  row('Key Safe Location', data.access.safeLocation);
+  row('Gate / Complex Code', data.access.gateCode);
+  row('Alarm Codes', data.access.alarm);
+  row('WiFi Name', data.access.wifi);
+  row('WiFi Password', data.access.wifipass);
+  row('Guest WiFi Display', data.access.wifiguest);
+  row('Smart Devices', data.access.smart);
+  y += 4;
+
+  section('PRICING PREFERENCES');
+  row('Avg Nightly Rate', data.pricing.avgrate);
+  row('Avg Monthly Revenue', data.pricing.avgrev);
+  row('Share Airbnb Data', data.pricing.shareData);
+  row('Minimum Nightly Rate', data.pricing.minrate);
+  row('Monthly Income Target', data.pricing.target);
+  row('Occupancy Goal', data.pricing.occ);
+  row('Dynamic Pricing', data.pricing.dyn);
+  row('Minimum Stay', data.pricing.minstay);
+  row('Blocked Dates', data.pricing.blocked);
+  row('Additional Notes', data.pricing.pricenotes);
+  y += 4;
+
+  section('OPERATIONS & CONTACTS');
+  row('Has Cleaner', data.operations.hasClean);
+  row('Cleaner Details', data.operations.cleaner);
+  row('Neighbour / Local', data.operations.neighbour);
+  row('Handyman', data.operations.handyman);
+  row('Other Trades', data.operations.trades);
+  row('Operations Handling', data.operations.ops);
+  row('Involvement Level', data.operations.inv);
+  row('Cost Philosophy', data.operations.cost);
+  row('Pets Policy', data.operations.pets);
+  row('Children', data.operations.children);
+  row('Events / Gatherings', data.operations.events);
+  y += 4;
+
+  section('SECURITY & ESCALATION');
+  row('Noise / Strata Contact', data.security.q1);
+  row('Deterrent Use', data.security.q2);
+  row('Immediate Action', data.security.q3);
+  row('Consult Before Action', data.security.consult);
+  row('Security Contacts', data.security.secContacts);
+  y += 4;
+
+  section('ADD-ONS');
+  row('Guest Guidebook', data.addons.guide);
+  row('STRA / Council Help', data.addons.stra);
+  y += 4;
+
+  section('AMENITIES CONFIRMED');
+  checkPage(20);
+  doc.setFontSize(8); doc.setFont('helvetica', 'normal'); doc.setTextColor(26, 26, 26);
+  const cols = 3; const colW = tw / cols;
+  data.amenities.forEach((a, i) => {
+    const col = i % cols;
+    const xPos = ml + col * colW;
+    if (col === 0 && i > 0) { y += 5; checkPage(6); }
+    doc.text('✓ ' + a, xPos, y);
+    if (col === cols - 1 || i === data.amenities.length - 1) {}
+  });
+  y += 8;
+
+  if (data.notes !== '—') {
+    section('ADDITIONAL NOTES');
+    row('Notes', data.notes);
+  }
+
+  // Footer
+  const totalPages = doc.getNumberOfPages();
+  for (let p = 1; p <= totalPages; p++) {
+    doc.setPage(p);
+    doc.setFontSize(8); doc.setFont('helvetica', 'normal');
+    doc.setTextColor(150, 150, 150);
+    doc.text('Wandernest Stays — Confidential Property File', ml, ph - 8);
+    doc.text(`Page ${p} of ${totalPages}`, pw - mr, ph - 8, { align: 'right' });
+  }
+
+  return doc;
+}
+
+// ── SUBMIT HANDLER ───────────────────────────────────────
+async function handleSubmit() {
+  const data = collectData();
+  showScreen('screen-generating');
+
+  // Simulate brief generation delay
+  await new Promise(r => setTimeout(r, 1800));
+
+  // Generate + download PDF
+  try {
+    const pdf = await generatePDF(data);
+    pdf.save(`Wandernest_${data.property.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`);
+  } catch(e) { console.error('PDF error:', e); }
+
+  // Store for review screen
+  window._formData = data;
+
+  // Show review screen
+  buildReviewScreen(data);
+  showScreen('screen-review');
+}
+
+// ── REVIEW SCREEN ────────────────────────────────────────
+function buildReviewScreen(data) {
+  document.getElementById('review-title').textContent = data.property;
+  const c = document.getElementById('review-content');
+  c.innerHTML = '';
+
+  const section = (title, items) => {
+    const sec = document.createElement('div');
+    sec.className = 'review-section';
+    sec.innerHTML = `<div class="review-section-title">${title}</div><div class="review-grid">${
+      items.map(([label, value, full]) =>
+        `<div class="review-item${full?' full':''}${value==='—'?' empty':''}">
+          <div class="ril">${label}</div>
+          <div class="riv">${value === '—' ? 'Not provided' : value}</div>
+        </div>`
+      ).join('')
+    }</div>`;
+    c.appendChild(sec);
+  };
+
+  section('Owner details', [
+    ['Name', data.owner.name], ['Email', data.owner.email],
+    ['Phone', data.owner.phone], ['ABN', data.owner.abn],
+    ['Bank details', data.owner.bank, true], ['Emergency contact', data.owner.emergency, true]
+  ]);
+  section('Access & Security', [
+    ['Door code', data.access.doorcode], ['Lock type', data.access.locktype],
+    ['Key safe code', data.access.safeCode], ['Key safe location', data.access.safeLocation],
+    ['Gate code', data.access.gateCode], ['WiFi name', data.access.wifi],
+    ['WiFi password', data.access.wifipass], ['Alarm', data.access.alarm]
+  ]);
+  section('Property', [
+    ['Bed config', data.property_details.bedconfig], ['Linen', data.property_details.linen],
+    ['Bin day', data.property_details.bins], ['Toiletries storage', data.property_details.toiletries],
+    ['Cleaning supplies', data.property_details.cleaning, true],
+    ['Utilities', data.property_details.utilities, true],
+    ['Appliances', data.property_details.appliances, true]
+  ]);
+  section('Pricing', [
+    ['Min nightly rate', data.pricing.minrate], ['Income target', data.pricing.target],
+    ['Occupancy goal', data.pricing.occ], ['Dynamic pricing', data.pricing.dyn],
+    ['Min stay', data.pricing.minstay], ['Blocked dates', data.pricing.blocked, true]
+  ]);
+  section('Operations & preferences', [
+    ['Operations handling', data.operations.ops], ['Involvement level', data.operations.inv],
+    ['Cost philosophy', data.operations.cost], ['Pets', data.operations.pets],
+    ['Children', data.operations.children], ['Events', data.operations.events],
+    ['Cleaner', data.operations.cleaner, true], ['Handyman', data.operations.handyman, true]
+  ]);
+  section('Security preferences', [
+    ['Noise / strata contact', data.security.q1], ['Deterrent use', data.security.q2],
+    ['Immediate action', data.security.q3], ['Consult before action', data.security.consult, true]
+  ]);
+  section('Add-ons', [
+    ['Guest guidebook', data.addons.guide], ['STRA / council help', data.addons.stra]
+  ]);
+  section('Amenities confirmed', [
+    ['Total confirmed', `${data.amenities.length} amenities`, false],
+    ['Full list', data.amenities.join(', '), true]
+  ]);
+}
+
+function approveAndPushToNotion() {
+  showScreen('screen-generating');
+  document.querySelector('#screen-generating h2').textContent = 'Pushing to Notion…';
+  document.querySelector('#screen-generating p').textContent = 'Updating Dale\'s property page and databases.';
+
+  const data = window._formData;
+  const propertyName = data ? data.property : 'Property';
+  setTimeout(() => {
+    document.querySelector('#screen-success h2').textContent = 'All done — pushed to Notion';
+    document.querySelector('#screen-success p').textContent = propertyName + ' has been updated and all access codes, WiFi details and preferences are live in your databases.';
+    showScreen('screen-success');
+  }, 2000);
+}
+
+function requestChanges() {
+  alert('Feature: In production, this would email Dale a note asking him to update specific fields and resubmit.');
+}
+
+function startNewProperty() {
+  // Reset and go back to blank form
+  document.querySelectorAll('input:not([type=radio]):not([type=checkbox])').forEach(el => {
+    if (!el.closest('.pre')) el.value = '';
+  });
+  document.querySelectorAll('textarea').forEach(el => {
+    if (!el.closest('.pre')) el.value = '';
+  });
+  currentStep = 0;
+  document.querySelectorAll('.step').forEach((s, i) => s.classList.toggle('active', i === 0));
+  updateProgress();
+  showScreen('screen-form');
+}
+
+// ── SCREEN TOGGLE ────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ── INIT ─────────────────────────────────────────────────
+buildProgressSteps();
+buildAmenities();
+updateProgress();
+</script>
+</body>
+</html>
